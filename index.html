@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отправка формы</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .button.is-danger {
+      background-color: #e74c3c;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    #message {
+      display: none;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: center;
+      border-radius: 4px;
+    }
+
+    .date-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <h1 id="page-title">Форма отправки</h1>
+
+  <form id="form" class="container" method="POST">
+    <div class="field">
+      <label for="sender-name">Имя отправителя</label>
+      <input
+        id="sender-name"
+        class="input"
+        type="text"
+        placeholder="Введите имя отправителя"
+        name="Sender Name"
+        required
+      />
+    </div>
+
+    <div class="field">
+      <label for="recipient-name">Имя получателя</label>
+      <input
+        id="recipient-name"
+        class="input"
+        type="text"
+        placeholder="Введите имя получателя"
+        name="Recipient Name"
+        required
+      />
+    </div>
+
+    <div class="field">
+      <label for="location">Местоположение</label>
+      <select id="location" class="input" name="Location" required>
+        <option value="Samarqand" selected>Samarkand</option>
+        <option value="Toshkent">Tashkent</option>
+        <option value="Buxoro">Bukhara</option>
+        <option value="Xiva">Khiva</option>
+        <option value="Andijon">Andijan</option>
+        <option value="Nukus">Nukus</option>
+        <option value="Farg'ona">Fergana</option>
+        <option value="Namangan">Namangan</option>
+        <option value="Qarshi">Karshi</option>
+        <option value="Navoiy">Navoi</option>
+        <option value="Jizzax">Jizzakh</option>
+        <option value="Surxondaryo">Surkhandarya</option>
+        <option value="Sirdaryo">Syrdarya</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="recipient-phone">Номер получателя</label>
+      <input
+        id="recipient-phone"
+        class="input"
+        type="tel"
+        placeholder="Введите номер получателя"
+        name="Recipient Phone"
+        required
+      />
+    </div>
+
+    <div class="field">
+      <label for="amount">Сумма</label>
+      <input
+        id="amount"
+        class="input"
+        type="number"
+        placeholder="Введите сумму"
+        name="Amount"
+        required
+      />
+    </div>
+
+<!-- Поле для отображения даты -->
+    <div class="field">
+      <label for="date">Дата</label>
+      <input
+        id="date"
+        class="input"
+        type="text"
+        name="Date"
+        readonly
+        value=""  
+        />
+    </div>
+
+    <!-- Кнопки для изменения даты -->
+    <div class="date-buttons">
+      <button type="button" class="button" id="yesterday">Вчера</button>
+      <button type="button" class="button" id="today">Сегодня</button>
+      <button type="button" class="button" id="tomorrow">Завтра</button>
+    </div>
+
+    <div class="field">
+      <button class="button" type="submit" id="submit-button">
+        Отправить
+      </button>
+    </div>
+
+    <div class="field">
+      <button class="button is-danger" type="reset">
+        Отменить
+      </button>
+    </div>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+    // Функция для форматирования даты в нужный формат
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    // Функция для установки текущей даты в поле
+    function setDate(date) {
+      document.getElementById('date').value = formatDate(date);
+    }
+
+    // Устанавливаем дату по умолчанию (Сегодня)
+    window.onload = function() {
+      const today = new Date();
+      setDate(today);  // Отображаем текущую дату
+
+      // Извлекаем Telegram ID из URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const telegramId = urlParams.get('telegramid');
+
+      // Изменяем заголовок страницы в зависимости от наличия Telegram ID
+      if (telegramId) {
+        document.getElementById('page-title').textContent = `Telegram ID: ${telegramId}`;
+      } else {
+        document.getElementById('page-title').textContent = 'Нет Telegram ID';
+      }
+    }
+
+    // Обработчики для кнопок
+    document.getElementById('yesterday').addEventListener('click', function() {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);  // Уменьшаем на один день
+      setDate(yesterday);
+    });
+
+    document.getElementById('today').addEventListener('click', function() {
+      const today = new Date();
+      setDate(today);  // Устанавливаем текущую дату
+    });
+
+    document.getElementById('tomorrow').addEventListener('click', function() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);  // Увеличиваем на один день
+      setDate(tomorrow);
+    });
+
+    // Обработчик отправки формы
+    document.getElementById("form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      var formData = new FormData(this);
+      var keyValuePairs = [];
+      for (var pair of formData.entries()) {
+        keyValuePairs.push(pair[0] + "=" + encodeURIComponent(pair[1]));
+      }
+
+      var formDataString = keyValuePairs.join("&");
+
+      fetch(
+        "https://script.google.com/macros/s/AKfycbxUt7twKR5FvI86Cn9MI04GWJIVFbO9iV4-4IQIeycPmxtrAP-__jshFUt3G9Np14NI/exec",
+        {
+          redirect: "follow",
+          method: "POST",
+          body: formDataString,
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+        }
+      )
+      .then(function(response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Ошибка при отправке формы.");
+        }
+      })
+      .then(function(data) {
+        document.getElementById("message").textContent = "Данные успешно отправлены!";
+        document.getElementById("message").style.backgroundColor = "#28a745";
+        document.getElementById("message").style.color = "white";
+        document.getElementById("message").style.display = "block";
+
+        setTimeout(function() {
+          document.getElementById("message").textContent = "";
+          document.getElementById("message").style.display = "none";
+        }, 2600);
+      })
+      .catch(function(error) {
+        document.getElementById("message").textContent = "Произошла ошибка при отправке формы.";
+        document.getElementById("message").style.backgroundColor = "#e74c3c";
+        document.getElementByid("message").style.color = "white";
+        document.getElementById("message").style.display = "block";
+        setTimeout(function() {
+          document.getElementById("message").textContent = "";
+          document.getElementById("message").style.display = "none";
+        }, 2600);
+      });
+    });
+  </script>
+</body>
+</html>
