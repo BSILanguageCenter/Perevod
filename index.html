@@ -282,13 +282,12 @@
   .then(data => {
     document.getElementById('message').style.display = 'block';
     
-    // Clear all form fields except for Telegram ID
     const formElements = document.querySelectorAll('.input');
-    formElements.forEach(function(element) {
-      if (element.id !== 'telegramid') {
-        element.value = ''; // Clear field
-      }
-    });
+formElements.forEach(function(element) {
+  if (element.id !== 'telegramid' && element.id !== 'location' && element.id !== 'date') {
+    element.value = ''; // Очищаем поле
+  }
+});
 
     setTimeout(function() {
       document.getElementById('message').style.display = 'none';
