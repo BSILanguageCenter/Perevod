@@ -33,7 +33,7 @@
     }
 
     .input {
-      width: 80%; /* Уменьшение ширины поля */
+      width: 80%; /* Уменьшена ширина поля */
       padding: 10px;
       border: 1px solid #666;
       border-radius: 4px;
@@ -118,39 +118,40 @@
 </head>
 <body>
   <form id="form" class="container" method="POST">
+    <!-- Ввод Telegram ID, только для чтения -->
     <div class="field">
       <label for="telegramid">Telegram ID</label>
       <input
-        id="telegramid"
-        class="input"
-        type="text"
-        placeholder="Telegram ID"
-        name="TelegramID"
-        readonly
+      id="telegramid"
+      class="input"
+      type="text"
+      placeholder="Telegram ID"
+      name="TelegramID"
+      readonly
       />
     </div>
 
     <div class="field">
       <label for="sender-name">Имя отправителя</label>
       <input
-        id="sender-name"
-        class="input"
-        type="text"
-        placeholder="Имя отправителя"
-        name="Sender Name"
-        required
+      id="sender-name"
+      class="input"
+      type="text"
+      placeholder="Имя отправителя"
+      name="Sender Name"
+      required
       />
     </div>
 
     <div class="field">
       <label for="recipient-name">Имя получателя</label>
       <input
-        id="recipient-name"
-        class="input"
-        type="text"
-        placeholder="Имя получателя"
-        name="Recipient Name"
-        required
+      id="recipient-name"
+      class="input"
+      type="text"
+      placeholder="Имя получателя"
+      name="Recipient Name"
+      required
       />
     </div>
 
@@ -176,36 +177,36 @@
     <div class="field">
       <label for="recipient-phone">Номер получателя</label>
       <input
-        id="recipient-phone"
-        class="input"
-        type="tel"
-        placeholder="Номер получателя"
-        name="Recipient Phone"
-        required
+      id="recipient-phone"
+      class="input"
+      type="tel"
+      placeholder="Номер получателя"
+      name="Recipient Phone"
+      required
       />
     </div>
 
     <div class="field">
       <label for="amount">Сумма</label>
       <input
-        id="amount"
-        class="input"
-        type="number"
-        placeholder="Сумма"
-        name="Amount"
-        required
+      id="amount"
+      class="input"
+      type="number"
+      placeholder="Сумма"
+      name="Amount"
+      required
       />
     </div>
 
     <div class="field">
       <label for="date">Дата</label>
       <input
-        id="date"
-        class="input"
-        type="text"
-        name="Date"
-        readonly
-        value=""
+      id="date"
+      class="input"
+      type="text"
+      name="Date"
+      readonly
+      value=""
       />
     </div>
 
@@ -215,6 +216,7 @@
       <button type="button" id="tomorrow">Завтра</button>
     </div>
 
+    <!-- Кнопка отправки формы -->
     <div class="field">
       <button class="button" type="submit" id="submit-button">
         Отправить
@@ -259,44 +261,59 @@
         document.getElementById('telegramid').style.backgroundColor = '#f8d7da';
         document.getElementById('telegramid').style.color = '#721c24';
       }
-
-      
     };
 
     document.getElementById("form").addEventListener("submit", function(e) {
-  e.preventDefault();
+      e.preventDefault();
 
-  var formData = new FormData(this);
-  var keyValuePairs = [];
-  for (var pair of formData.entries()) {
-    keyValuePairs.push(pair[0] + "=" + pair[1]);
-  }
-
-  var queryString = keyValuePairs.join("&");
-
-  fetch("https://script.google.com/macros/s/AKfycbxUt7twKR5FvI86Cn9MI04GWJIVFbO9iV4-4IQIeycPmxtrAP-__jshFUt3G9Np14NI/exec", {
-    method: "POST",
-    body: queryString
-  })
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById('message').style.display = 'block';
-    
-    // Clear all form fields except for Telegram ID
-    const formElements = document.querySelectorAll('.input');
-    formElements.forEach(function(element) {
-      if (element.id !== 'telegramid') {
-        element.value = ''; // Clear field
+      // Создаём FormData из формы
+      var formData = new FormData(this);
+      var keyValuePairs = [];
+      for (var pair of formData.entries()) {
+        keyValuePairs.push(pair[0] + "=" + pair[1]);
       }
+
+      var queryString = keyValuePairs.join("&");
+
+      fetch("https://script.google.com/macros/s/AKfycbw2ZuZBqxVbSfVvf2gUSse5V0ys3TO7iN8z9G/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: queryString,
+      })
+      .then(function(response) {
+        if (response.ok) {
+          document.getElementById("message").style.display = "block";
+          setTimeout(function() {
+            document.getElementById("message").style.display = "none";
+          }, 5000);
+        } else {
+          alert("Произошла ошибка при отправке данных.");
+        }
+      })
+      .catch(function(error) {
+        alert("Ошибка при отправке данных.");
+      });
     });
 
-    setTimeout(function() {
-      document.getElementById('message').style.display = 'none';
-    }, 3000);
-  })
-  .catch(error => console.error('Ошибка:', error));
-});
+    document.getElementById("yesterday").addEventListener("click", function() {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      setDate(yesterday);
+    });
 
+    document.getElementById("today").addEventListener("click", function() {
+      const today = new Date();
+      setDate(today);
+    });
+
+    document.getElementById("tomorrow").addEventListener("click", function() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setDate(tomorrow);
+    });
+    
   </script>
 </body>
 </html>
