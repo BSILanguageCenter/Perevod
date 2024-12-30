@@ -33,7 +33,7 @@
     }
 
     .input {
-      width: 80%; /* Уменьшение ширины поля */
+      width: 80%;
       padding: 10px;
       border: 1px solid #666;
       border-radius: 4px;
@@ -110,7 +110,7 @@
       }
 
       .input {
-        width: 100%; /* Поля занимают всю ширину на мобильных устройствах */
+        width: 100%;
       }
     }
 
@@ -285,7 +285,7 @@
     const formElements = document.querySelectorAll('.input');
 formElements.forEach(function(element) {
   if (element.id !== 'telegramid' && element.id !== 'location' && element.id !== 'date') {
-    element.value = ''; // Очищаем поле
+    element.value = '';
   }
 });
 
