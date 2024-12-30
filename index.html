@@ -197,7 +197,7 @@
 
       // Изменяем заголовок страницы в зависимости от наличия Telegram ID
       if (telegramId) {
-        document.getElementById('page-title').textContent = ${telegramId};
+        document.getElementById('page-title').textContent = `${telegramId}`;
       } else {
         document.getElementById('page-title').textContent = 'Нет Telegram ID';
       }
