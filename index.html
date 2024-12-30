@@ -67,10 +67,24 @@
   </style>
 </head>
 <body>
-  <h1 id="page-title">Форма отправки</h1>
-
   <form id="form" class="container" method="POST">
+    <!-- Поле для имени отправителя, которое будет заполняться из URL -->
+   
+
+    <!-- Поле для Telegram ID, которое будет заполняться из URL -->
     <div class="field">
+      <label for="telegramid">Telegram ID</label>
+      <input
+        id="telegramid"
+        class="input"
+        type="text"
+        placeholder="Telegram ID"
+        name="TelegramID"
+        readonly
+      />
+    </div>
+
+     <div class="field">
       <label for="sender-name">Имя отправителя</label>
       <input
         id="sender-name"
@@ -78,7 +92,6 @@
         type="text"
         placeholder="Введите имя отправителя"
         name="Sender Name"
-        required
       />
     </div>
 
@@ -137,7 +150,7 @@
       />
     </div>
 
-<!-- Поле для отображения даты -->
+    <!-- Поле для отображения даты -->
     <div class="field">
       <label for="date">Дата</label>
       <input
@@ -147,7 +160,7 @@
         name="Date"
         readonly
         value=""  
-        />
+      />
     </div>
 
     <!-- Кнопки для изменения даты -->
@@ -173,6 +186,12 @@
   <div id="message"></div>
 
   <script>
+    // Функция для извлечения параметра из URL
+    function getUrlParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
     // Функция для форматирования даты в нужный формат
     function formatDate(date) {
       const day = String(date.getDate()).padStart(2, '0');
@@ -186,40 +205,52 @@
       document.getElementById('date').value = formatDate(date);
     }
 
+    // Получаем Telegram ID из URL
+    function getTelegramID() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('telegramid');
+    }
+
     // Устанавливаем дату по умолчанию (Сегодня)
     window.onload = function() {
       const today = new Date();
       setDate(today);  // Отображаем текущую дату
 
-      // Извлекаем Telegram ID из URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const telegramId = urlParams.get('telegramid');
+      // Извлекаем параметры из URL и заполняем поля
+      const senderName = getUrlParameter('sendername');
+      const telegramId = getTelegramID();
 
-      // Изменяем заголовок страницы в зависимости от наличия Telegram ID
-      if (telegramId) {
-        document.getElementById('page-title').textContent = `${telegramId}`;
-      } else {
-        document.getElementById('page-title').textContent = 'Нет Telegram ID';
+      if (senderName) {
+        document.getElementById('sender-name').value = senderName;
       }
-    }
 
-    // Обработчики для кнопок
-    document.getElementById('yesterday').addEventListener('click', function() {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);  // Уменьшаем на один день
-      setDate(yesterday);
-    });
+      if (telegramId) {
+        document.getElementById('telegramid').value = telegramId;
+      } else {
+        // Если Telegram ID нет, показываем сообщение
+        document.getElementById('telegramid').value = 'Telegram ID нет';
+        document.getElementById('telegramid').style.backgroundColor = '#f8d7da';
+        document.getElementById('telegramid').style.color = '#721c24';
+      }
 
-    document.getElementById('today').addEventListener('click', function() {
-      const today = new Date();
-      setDate(today);  // Устанавливаем текущую дату
-    });
+      // Обработчики для кнопок
+      document.getElementById('yesterday').addEventListener('click', function() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);  // Уменьшаем на один день
+        setDate(yesterday);
+      });
 
-    document.getElementById('tomorrow').addEventListener('click', function() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);  // Увеличиваем на один день
-      setDate(tomorrow);
-    });
+      document.getElementById('today').addEventListener('click', function() {
+        const today = new Date();
+        setDate(today);  // Устанавливаем текущую дату
+      });
+
+      document.getElementById('tomorrow').addEventListener('click', function() {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);  // Увеличиваем на один день
+        setDate(tomorrow);
+      });
+    };
 
     // Обработчик отправки формы
     document.getElementById("form").addEventListener("submit", function(e) {
@@ -254,25 +285,15 @@
       .then(function(data) {
         document.getElementById("message").textContent = "Данные успешно отправлены!";
         document.getElementById("message").style.backgroundColor = "#28a745";
-        document.getElementById("message").style.color = "white";
         document.getElementById("message").style.display = "block";
-
-        setTimeout(function() {
-          document.getElementById("message").textContent = "";
-          document.getElementById("message").style.display = "none";
-        }, 2600);
       })
       .catch(function(error) {
-        document.getElementById("message").textContent = "Произошла ошибка при отправке формы.";
-        document.getElementById("message").style.backgroundColor = "#e74c3c";
-        document.getElementByid("message").style.color = "white";
+        document.getElementById("message").textContent = "Произошла ошибка при отправке данных.";
+        document.getElementById("message").style.backgroundColor = "#dc3545";
         document.getElementById("message").style.display = "block";
-        setTimeout(function() {
-          document.getElementById("message").textContent = "";
-          document.getElementById("message").style.display = "none";
-        }, 2600);
       });
     });
-  </script>
+</script>
+
 </body>
 </html>
